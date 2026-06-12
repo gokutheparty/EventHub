@@ -1,0 +1,339 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  CUSTOMER
+  VENDOR
+  ADMIN
+}
+
+enum VerificationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum VerificationLevel {
+  BASIC      // Blue Badge
+  BUSINESS   // Green Badge
+  PREMIUM    // Gold Badge
+}
+
+enum InquiryStatus {
+  PENDING
+  DISCUSSING
+  AGREED
+  CLOSED
+}
+
+enum EventRequestStatus {
+  OPEN
+  MATCHED
+  CLOSED
+}
+
+enum ProposalStatus {
+  SUBMITTED
+  SHORTLISTED
+  ACCEPTED
+  REJECTED
+}
+
+enum AvailabilityStatus {
+  AVAILABLE
+  RESERVED
+  BLOCKED
+}
+
+enum ApprovalStatus {
+  PENDING
+  APPROVED
+  IGNORED
+}
+
+enum ClaimStatus {
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
+model User {
+  id            String          @id @default(uuid())
+  email         String          @unique
+  passwordHash  String
+  fullName      String
+  role          Role            @default(CUSTOMER)
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  vendors       Vendor[]
+  reviews       Review[]
+  verifications Verification[]  @relation("VerifiedBy")
+  eventRequests EventRequest[]
+  favorites     Favorite[]
+}
+
+model Category {
+  id          String           @id @default(uuid())
+  name        String           @unique
+  slug        String           @unique
+  description String?
+  vendors     VendorCategory[]
+}
+
+model Vendor {
+  id                 String              @id @default(uuid())
+  userId             String?
+  user               User?               @relation(fields: [userId], references: [id], onDelete: SetNull)
+  name               String
+  description        String?
+  location           String              // Full address
+  city               String?
+  region             String?
+  country            String?             @default("Ghana")
+  latitude           Float?
+  longitude          Float?
+  phone              String?
+  email              String?
+  website            String?
+  socialLinks        Json?               // e.g. {"instagram": "...", "facebook": "..."}
+  isVerified         Boolean             @default(false)
+  verificationLevel  VerificationLevel?
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  categories         VendorCategory[]
+  projects           PortfolioProject[]
+  reviews            Review[]
+  verificationRecord Verification?
+  reputation         ReputationScore?
+  inquiries          Inquiry[]
+  proposals          VendorProposal[]
+  availabilities     AvailabilityRecord[]
+  claims             VendorClaim[]
+  analytics          VendorAnalytics?
+  favorites          Favorite[]
+  featuredPlacements FeaturedPlacement[]
+}
+
+model VendorCategory {
+  vendorId   String
+  vendor     Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@id([vendorId, categoryId])
+}
+
+model PortfolioProject {
+  id          String           @id @default(uuid())
+  vendorId    String
+  vendor      Vendor           @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  title       String
+  eventType   String?          // e.g. "Wedding"
+  guestCount  Int?
+  budgetRange String?          // e.g. "GHS 10,000 - 20,000"
+  description String?
+  testimonial String?
+  createdAt   DateTime         @default(now())
+  images      PortfolioImage[]
+}
+
+model PortfolioImage {
+  id         String           @id @default(uuid())
+  projectId  String
+  project    PortfolioProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  imageUrl   String
+  isPrimary  Boolean          @default(false)
+  createdAt  DateTime         @default(now())
+}
+
+model Review {
+  id         String   @id @default(uuid())
+  vendorId   String
+  vendor     Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  rating     Int      // 1 to 5 stars
+  reviewText String?
+  createdAt  DateTime @default(now())
+}
+
+model Verification {
+  vendorId           String             @id
+  vendor             Vendor             @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  verificationStatus VerificationStatus @default(PENDING)
+  verificationLevel  VerificationLevel  @default(BASIC)
+  verificationDate   DateTime?
+  verifiedById       String?
+  verifiedBy         User?              @relation("VerifiedBy", fields: [verifiedById], references: [id])
+  notes              String?
+}
+
+model ReputationScore {
+  vendorId               String   @id
+  vendor                 Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  averageRating          Float    @default(0.0)
+  reviewVolume           Int      @default(0)
+  responseSpeedMinutes   Int      @default(0)
+  inquiryConversionRate  Float    @default(0.0)
+  profileCompletenessPct Int      @default(0)
+  bookingCompletionRate  Float    @default(0.0)
+  updatedAt              DateTime @updatedAt
+}
+
+model Inquiry {
+  id            String        @id @default(uuid())
+  vendorId      String
+  vendor        Vendor        @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  customerName  String
+  customerEmail String
+  customerPhone String?
+  eventDate     DateTime?
+  details       String
+  status        InquiryStatus @default(PENDING)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  conversation  Conversation?
+}
+
+model EventRequest {
+  id             String             @id @default(uuid())
+  customerId     String
+  customer       User               @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  title          String
+  eventType      String
+  guestCount     Int?
+  budgetRange    String?
+  location       String
+  city           String?
+  region         String?
+  country        String?            @default("Ghana")
+  latitude       Float?
+  longitude      Float?
+  eventDate      DateTime
+  details        String
+  status         EventRequestStatus @default(OPEN)
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+  proposals      VendorProposal[]
+}
+
+model VendorProposal {
+  id             String         @id @default(uuid())
+  requestId      String
+  eventRequest   EventRequest   @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  vendorId       String
+  vendor         Vendor         @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  priceEstimate  Decimal?
+  proposalText   String
+  status         ProposalStatus @default(SUBMITTED)
+  createdAt      DateTime       @default(now())
+}
+
+model AvailabilityRecord {
+  id        String             @id @default(uuid())
+  vendorId  String
+  vendor    Vendor             @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  date      DateTime
+  status    AvailabilityStatus @default(AVAILABLE)
+  notes     String?
+  createdAt DateTime           @default(now())
+
+  @@unique([vendorId, date])
+}
+
+model VendorClaim {
+  id                String      @id @default(uuid())
+  vendorId          String
+  vendor            Vendor      @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  claimantEmail     String
+  claimantPhone     String?
+  verificationToken String
+  status            ClaimStatus @default(PENDING)
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+}
+
+model VendorAnalytics {
+  vendorId       String   @id
+  vendor         Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  profileViews   Int      @default(0)
+  inquiryCount   Int      @default(0)
+  favoritesCount Int      @default(0)
+  proposalCount  Int      @default(0)
+  updatedAt      DateTime @updatedAt
+}
+
+model Favorite {
+  userId   String
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  vendorId String
+  vendor   Vendor @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+
+  @@id([userId, vendorId])
+}
+
+model FeaturedPlacement {
+  id        String   @id @default(uuid())
+  vendorId  String
+  vendor    Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  startDate DateTime
+  endDate   DateTime
+  priority  Int      @default(0)
+  status    String   @default("ACTIVE")
+  createdAt DateTime @default(now())
+}
+
+model VendorStaging {
+  id              String         @id @default(uuid())
+  categories      String[]       // Classified categories
+  name            String
+  description     String?
+  location        String?
+  city            String?
+  region          String?
+  country         String?        @default("Ghana")
+  latitude        Float?
+  longitude       Float?
+  phone           String?
+  email           String?
+  website         String?
+  socialLinks     Json?          // {"instagram": "...", "facebook": "..."}
+  extractedImages String[]       // Extracted portfolio assets
+  sourceUrl       String?
+  confidenceScore Float          @default(0.0)
+  trustScore      Float          @default(0.0)
+  approvalStatus  ApprovalStatus @default(PENDING)
+  createdAt       DateTime       @default(now())
+}
+
+model AiAcquisitionLog {
+  id        String   @id @default(uuid())
+  agentName String
+  action    String
+  details   String?
+  createdAt DateTime @default(now())
+}
+
+model Conversation {
+  id        String    @id @default(uuid())
+  inquiryId String?   @unique
+  inquiry   Inquiry?  @relation(fields: [inquiryId], references: [id], onDelete: SetNull)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  messages  Message[]
+}
+
+model Message {
+  id             String       @id @default(uuid())
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  senderId       String
+  text           String
+  createdAt      DateTime     @default(now())
+}
