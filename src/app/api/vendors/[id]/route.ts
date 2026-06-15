@@ -6,6 +6,9 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
+    if (!params || !params.id) {
+      return NextResponse.json({ error: 'Missing vendor ID' }, { status: 400 });
+    }
     const id = params.id;
 
     const vendor = await prisma.vendor.findUnique({

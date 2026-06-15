@@ -74,9 +74,11 @@ export default function EventRequestsMarketplace() {
     if (!selectedReq) return;
     setProposals([]);
 
+    const reqId = selectedReq.id;
+
     async function loadProposals() {
       try {
-        const res = await fetch(`/api/proposals?requestId=${selectedReq.id}`);
+        const res = await fetch(`/api/proposals?requestId=${reqId}`);
         if (res.ok) {
           const data = await res.json();
           setProposals(data);
@@ -91,6 +93,7 @@ export default function EventRequestsMarketplace() {
   const handleProposalSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedReq || !pitchText) return;
+    const targetRequestId = selectedReq.id;
     setSubmittingProposal(true);
 
     try {
@@ -98,7 +101,7 @@ export default function EventRequestsMarketplace() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          requestId: selectedReq.id,
+          requestId: targetRequestId,
           priceEstimate: estimatePrice,
           proposalText: pitchText,
         }),
@@ -110,7 +113,7 @@ export default function EventRequestsMarketplace() {
       setEstimatePrice('');
       
       // Reload proposals
-      const propRes = await fetch(`/api/proposals?requestId=${selectedReq.id}`);
+      const propRes = await fetch(`/api/proposals?requestId=${targetRequestId}`);
       const propData = await propRes.json();
       setProposals(propData);
       

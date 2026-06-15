@@ -90,7 +90,7 @@ export default function RootLayout({
                 </ul>
               </div>
             </div>
-            <div style={{ maxWidth: '1200px', margin: '30px auto 0', paddingSelf: '30px', borderTop: '1px solid rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+            <div style={{ maxWidth: '1200px', margin: '30px auto 0', paddingTop: '30px', borderTop: '1px solid rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
               <p>&copy; {new Date().getFullYear()} EventHub Inc. All rights reserved.</p>
               <p>Designed for Accra, Kumasi, and dynamic growth in Africa.</p>
             </div>

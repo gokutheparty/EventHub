@@ -86,7 +86,7 @@ export async function POST(request: Request) {
       await prisma.vendorAnalytics.upsert({
         where: { vendorId: vendor.id },
         update: { proposalCount: { increment: 1 } },
-        create: { vendorId, proposalCount: 1 },
+        create: { vendorId: vendor.id, proposalCount: 1 },
       });
     } catch (e) {
       console.error('Failed to update analytics proposals:', e);

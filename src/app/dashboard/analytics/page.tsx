@@ -16,7 +16,13 @@ interface Vendor {
   isVerified: boolean;
   verificationLevel: string;
   analytics: Analytics | null;
-  reputation: { averageRating: number; reviewVolume: number } | null;
+  reputation: {
+    averageRating: number;
+    reviewVolume: number;
+    responseSpeedMinutes: number;
+    inquiryConversionRate: number;
+    bookingCompletionRate: number;
+  } | null;
 }
 
 export default function VendorAnalyticsPage() {
