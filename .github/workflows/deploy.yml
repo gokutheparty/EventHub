@@ -42,7 +42,7 @@ jobs:
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
           RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}
-        run: railway up --service Eventhub --detach
+        run: railway up --service 2eb16179-038e-4e72-a5f8-29adb97dc067 --detach
 
       # --- EXAMPLE B: Deployment utilizing Render CLI (Alternative) ---
       # - name: Trigger Render Deploy Hook
