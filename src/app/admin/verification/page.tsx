@@ -54,6 +54,8 @@ export default function AdminVerificationPage() {
   // AI Agent Log Simulator State
   const [simulating, setSimulating] = useState(false);
   const [simLogs, setSimLogs] = useState<string[]>([]);
+  const [crawlCategory, setCrawlCategory] = useState('Event Centers');
+  const [crawlCity, setCrawlCity] = useState('Accra');
 
   const loadAdminData = async () => {
     try {
@@ -172,35 +174,83 @@ export default function AdminVerificationPage() {
     }
   };
 
-  // Run Simulated AI Crawler sequence
-  const runAiCrawlerSimulation = () => {
+  // Run Simulated/Real AI Crawler sequence
+  const runAiCrawlerSimulation = async () => {
     setSimulating(true);
-    setSimLogs([]);
-    const logsSequence = [
-      '[Agent 1: Discovery] 🔍 Initializing web scraper engine...',
-      '[Agent 1: Discovery] Found event category target page: "Accra Business Yellowpages"',
-      '[Agent 1: Discovery] Collected candidate URLs: 3 matches identified.',
-      '[Agent 2: Extraction] 📂 Starting schema parsers on source listings...',
-      '[Agent 2: Extraction] Extracted: "Gold Star Ushers", "Deluxe Decors", "Dynamic Sound Band"',
-      '[Agent 3: Cleaning] 🧹 Standardizing address layouts & normalizing phone formatting (+233 standard)...',
-      '[Agent 4: Enrichment] 🏷️ Classifying categories & generating tags: mapped to "Live Bands", "Decorators", "Ushering"...',
-      '[Agent 5: Trust Scoring] 📊 Legitimizing online footprints... Average candidate confidence score: 85%',
-      '[Agent 6: Deduplication] 🧬 Deduplicating records... No existing matching database duplicates found.',
-      '[Growth Agent 7] 🚀 Candidates successfully loaded into vendor_staging table, ready for approval!'
-    ];
+    setSimLogs(['[Pipeline] 🚀 Initializing Live AI Scraper on FastAPI Backend...']);
 
-    let currentLogIndex = 0;
-    const interval = setInterval(() => {
-      if (currentLogIndex < logsSequence.length) {
-        setSimLogs(prev => [...prev, logsSequence[currentLogIndex]]);
-        currentLogIndex++;
-      } else {
-        clearInterval(interval);
-        setSimulating(false);
-        // Refresh data to show loaded items
-        loadAdminData();
+    try {
+      const triggerRes = await fetch('/api/admin/crawl', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ category: crawlCategory, city: crawlCity }),
+      });
+
+      if (!triggerRes.ok) {
+        throw new Error('FastAPI server returned non-ok status.');
       }
-    }, 1200);
+
+      const { job_id } = await triggerRes.json();
+      setSimLogs(prev => [
+        ...prev,
+        `[Pipeline] Crawl job queued successfully with ID: ${job_id}`,
+        `[Pipeline] Target Category: ${crawlCategory} | Target City: ${crawlCity}`,
+        '[Pipeline] Polling agent logs...'
+      ]);
+
+      // Poll status every second
+      const pollInterval = setInterval(async () => {
+        try {
+          const statusRes = await fetch(`/api/admin/crawl/${job_id}`);
+          if (!statusRes.ok) return;
+
+          const jobData = await statusRes.json();
+          if (jobData.logs) {
+            setSimLogs(jobData.logs);
+          }
+
+          if (jobData.status === 'completed' || jobData.status === 'failed') {
+            clearInterval(pollInterval);
+            setSimulating(false);
+            loadAdminData(); // Refresh the staging list
+          }
+        } catch (pollErr) {
+          console.error('Error polling crawl status:', pollErr);
+        }
+      }, 1000);
+
+    } catch (err: any) {
+      console.warn('FastAPI backend offline or returned error. Running local simulation fallback.', err);
+      setSimLogs(prev => [
+        ...prev,
+        `[Pipeline] ⚠️ FastAPI backend offline. Running client-side simulation fallback...`
+      ]);
+
+      const logsSequence = [
+        '[Agent 1: Discovery] 🔍 Initializing web scraper engine...',
+        '[Agent 1: Discovery] Found event category target page: "Accra Business Yellowpages"',
+        '[Agent 1: Discovery] Collected candidate URLs: 3 matches identified.',
+        '[Agent 2: Extraction] 📂 Starting schema parsers on source listings...',
+        '[Agent 2: Extraction] Extracted: "Gold Star Ushers", "Deluxe Decors", "Dynamic Sound Band"',
+        '[Agent 3: Cleaning] 🧹 Standardizing address layouts & normalizing phone formatting (+233 standard)...',
+        '[Agent 4: Enrichment] 🏷️ Classifying categories & generating tags: mapped to "Live Bands", "Decorators", "Ushering"...',
+        '[Agent 5: Trust Scoring] 📊 Legitimizing online footprints... Average candidate confidence score: 85%',
+        '[Agent 6: Deduplication] 🧬 Deduplicating records... No existing matching database duplicates found.',
+        '[Growth Agent 7] 🚀 Candidates successfully loaded into vendor_staging table, ready for approval!'
+      ];
+
+      let currentLogIndex = 0;
+      const interval = setInterval(() => {
+        if (currentLogIndex < logsSequence.length) {
+          setSimLogs(prev => [...prev, logsSequence[currentLogIndex]]);
+          currentLogIndex++;
+        } else {
+          clearInterval(interval);
+          setSimulating(false);
+          loadAdminData(); // Refresh data to show loaded items
+        }
+      }, 1200);
+    }
   };
 
   if (loading) {
@@ -366,19 +416,52 @@ export default function AdminVerificationPage() {
       <section className="glass" style={{ borderRadius: 'var(--radius-lg)', padding: '35px', marginBottom: '40px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '20px', marginBottom: '24px' }}>
           <div>
-            <h2 style={{ fontSize: '1.4rem', color: 'var(--text-primary)', marginBottom: '6px' }}>AI Acquisition Pipeline (Agents 1-7 Simulator)</h2>
+            <h2 style={{ fontSize: '1.4rem', color: 'var(--text-primary)', marginBottom: '6px' }}>AI Acquisition Pipeline (Live Agent Controller)</h2>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
-              Simulate web crawlers scanning Ghanaian yellowpages and directories to auto-populate the staging cache.
+              Trigger real-time web crawlers scanning business directories to stage new vendor listings.
             </p>
           </div>
-          <button 
-            onClick={runAiCrawlerSimulation} 
-            disabled={simulating}
-            className="glow-btn" 
-            style={{ padding: '12px 24px', borderRadius: 'var(--radius-md)', color: '#fff', fontSize: '0.9rem' }}
-          >
-            {simulating ? 'Running Crawlers...' : 'Trigger AI Crawling Scan'}
-          </button>
+          
+          <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-end', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+              <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', fontWeight: 600 }}>Category Target</span>
+              <select 
+                value={crawlCategory} 
+                onChange={(e) => setCrawlCategory(e.target.value)}
+                style={{ backgroundColor: 'var(--bg-input)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-sm)', padding: '8px 12px', fontSize: '0.85rem', color: '#fff' }}
+              >
+                <option value="Event Centers">Event Centers</option>
+                <option value="Event Planners">Event Planners</option>
+                <option value="Ushering Agencies">Ushering Agencies</option>
+                <option value="Caterers">Caterers</option>
+                <option value="Decorators">Decorators</option>
+                <option value="Photographers">Photographers</option>
+                <option value="Live Bands">Live Bands</option>
+              </select>
+            </div>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+              <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', fontWeight: 600 }}>Target City</span>
+              <select 
+                value={crawlCity} 
+                onChange={(e) => setCrawlCity(e.target.value)}
+                style={{ backgroundColor: 'var(--bg-input)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-sm)', padding: '8px 12px', fontSize: '0.85rem', color: '#fff' }}
+              >
+                <option value="Accra">Accra</option>
+                <option value="Kumasi">Kumasi</option>
+                <option value="Takoradi">Takoradi</option>
+              </select>
+            </div>
+
+            <button 
+              onClick={runAiCrawlerSimulation} 
+              disabled={simulating}
+              className="glow-btn" 
+              style={{ padding: '10px 20px', borderRadius: 'var(--radius-sm)', color: '#fff', fontSize: '0.85rem' }}
+            >
+              {simulating ? 'Agent Crawling...' : 'Trigger AI Crawling Scan'}
+            </button>
+          </div>
         </div>
 
         {/* Console and Staging list grid */}
