@@ -104,6 +104,8 @@ export async function GET(request: Request) {
         city: v.city,
         region: v.region,
         country: v.country,
+        latitude: v.latitude,
+        longitude: v.longitude,
         phone: v.phone,
         website: v.website,
         isVerified: v.isVerified,

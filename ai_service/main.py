@@ -101,7 +101,7 @@ class CrawlStatusResponse(BaseModel):
 # In-memory job tracker for demo/MVP
 jobs_db = {}
 
-def execute_agent_pipeline(job_id: str, category: str, city: str, source: Optional[str]):
+async def execute_agent_pipeline(job_id: str, category: str, city: str, source: Optional[str], db_pool):
     jobs_db[job_id]["status"] = "processing"
     logs = jobs_db[job_id]["logs"]
     
@@ -154,10 +154,50 @@ def execute_agent_pipeline(job_id: str, category: str, city: str, source: Option
         # Log final results and push to database
         unique_records = pipeline_data.get("extracted_records", [])
         
-        # In production deployment, we would run:
-        # for rec in unique_records:
-        #     # Insert into vendor_staging table using psycopg2/SQLAlchemy
-        #     # db.execute(insert_stmt, rec)
+        import json
+        async with db_pool.acquire() as conn:
+            for rec in unique_records:
+                region = "Greater Accra"
+                if city.lower() == "kumasi":
+                    region = "Ashanti"
+                elif city.lower() == "takoradi":
+                    region = "Western"
+
+                staging_uuid = str(uuid.uuid4())
+                
+                query = """
+                    INSERT INTO "VendorStaging" (
+                        "id", "categories", "name", "description", "location", "city", "region", "country",
+                        "latitude", "longitude", "phone", "email", "website", "socialLinks", "extractedImages",
+                        "sourceUrl", "confidenceScore", "trustScore", "approvalStatus", "createdAt"
+                    ) VALUES (
+                        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, NOW()
+                    )
+                """
+                
+                await conn.execute(
+                    query,
+                    staging_uuid,
+                    [category],
+                    rec.get("name", "Unknown Vendor"),
+                    rec.get("description", f"Specialized {category} in {city}."),
+                    rec.get("location", f"{city}, Ghana"),
+                    city,
+                    region,
+                    "Ghana",
+                    5.6322 if city.lower() == "accra" else (6.6912 if city.lower() == "kumasi" else 4.9011), # coordinates fallback
+                    -0.1654 if city.lower() == "accra" else (-1.6341 if city.lower() == "kumasi" else -1.7522),
+                    rec.get("phone"),
+                    rec.get("email"),
+                    rec.get("website"),
+                    json.dumps(rec.get("social_links", {})),
+                    rec.get("extracted_images", []),
+                    rec.get("source_url"),
+                    0.90, # mock scores
+                    0.85,
+                    "PENDING"
+                )
+                logs.append(f"[Pipeline] Staged vendor record '{rec.get('name')}' successfully in database.")
         
         jobs_db[job_id]["records_staged"] = len(unique_records)
         jobs_db[job_id]["pages_scraped"] = len(pipeline_data.get("discovered_urls", []))
@@ -185,7 +225,8 @@ async def trigger_crawling_pipeline(req: CrawlRequest, background_tasks: Backgro
         job_id,
         req.category,
         req.target_city,
-        req.source_url
+        req.source_url,
+        app.state.db_pool
     )
     
     return jobs_db[job_id]

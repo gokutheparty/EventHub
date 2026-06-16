@@ -79,17 +79,17 @@ def execute_integration_test():
     expected_phones = ["+233244123456", "+233555987654"]
     for ph in expected_phones:
         if ph in cleaned_result.phones:
-            print(f"✓ Verified: Cleaned phone numbers list successfully contains '{ph}'")
+            print(f"[OK] Verified: Cleaned phone numbers list successfully contains '{ph}'")
         else:
-            print(f"✗ ERROR: Expected E.164 phone number '{ph}' was not found in cleaned list: {cleaned_result.phones}")
+            print(f"[ERROR] Expected E.164 phone number '{ph}' was not found in cleaned list: {cleaned_result.phones}")
             sys.exit(1)
 
     # Check category formatting
     expected_category = VendorCategoryEnum.EVENT_CENTER
     if expected_category in cleaned_result.categories:
-        print(f"✓ Verified: Primary category successfully classified as '{expected_category.value}'")
+        print(f"[OK] Verified: Primary category successfully classified as '{expected_category.value}'")
     else:
-        print(f"✗ ERROR: Category was not mapped to '{expected_category.value}'. Classified categories: {cleaned_result.categories}")
+        print(f"[ERROR] Category was not mapped to '{expected_category.value}'. Classified categories: {cleaned_result.categories}")
         sys.exit(1)
 
     # 4. Database Ingestion Layer write
@@ -103,13 +103,13 @@ def execute_integration_test():
     try:
         staging_id = insert_staging_record(cleaned_result, source_url="https://local.scraped.test/akwaaba")
         if staging_id:
-            print(f"✓ Success: Cleaned vendor staging row successfully inserted! Staging ID: {staging_id}")
+            print(f"[OK] Success: Cleaned vendor staging row successfully inserted! Staging ID: {staging_id}")
             print("=== PIPELINE RUN: COMPLETE SUCCESS ===")
         else:
             print("! Skipped: Record already exists in staging/production database (Deduplication Check).")
             print("=== PIPELINE RUN: COMPLETE SUCCESS (DEDUPLICATED) ===")
     except Exception as db_err:
-        print(f"✗ Database Ingestion Error: {str(db_err)}")
+        print(f"[ERROR] Database Ingestion Error: {str(db_err)}")
         sys.exit(1)
 
 def get_mock_extracted() -> RawVendorExtraction:

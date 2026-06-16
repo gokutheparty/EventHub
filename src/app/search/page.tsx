@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState, Suspense } from 'react';
 import Link from 'next/link';
+import MapView from './MapView';
 
 interface Vendor {
   id: string;
@@ -39,6 +40,8 @@ function SearchContent() {
   const [verifiedOnly, setVerifiedOnly] = useState(false);
   const [minRating, setMinRating] = useState('');
   const [favorites, setFavorites] = useState<string[]>([]);
+  const [showMap, setShowMap] = useState(true);
+  const [hoveredVendorId, setHoveredVendorId] = useState<string | null>(null);
 
   // Fetch Favorites of currently logged in user
   const loadFavorites = async () => {
@@ -141,10 +144,53 @@ function SearchContent() {
   };
 
   return (
-    <div style={{ maxWidth: '1200px', margin: '40px auto', padding: '0 20px', width: '100%', flex: 1 }}>
-      <h1 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '24px' }}>Browse Service Providers</h1>
+    <div style={{ maxWidth: showMap ? '1500px' : '1200px', margin: '40px auto', padding: '0 20px', width: '100%', flex: 1, transition: 'max-width 0.3s ease' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
+        <h1 style={{ fontSize: '2rem', fontWeight: 800, margin: 0 }}>Browse Service Providers</h1>
+        
+        <div style={{ display: 'flex', gap: '4px', background: 'var(--bg-secondary)', padding: '4px', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
+          <button 
+            onClick={() => setShowMap(true)}
+            style={{ 
+              padding: '6px 14px', 
+              borderRadius: '6px', 
+              border: 'none', 
+              fontSize: '0.85rem', 
+              fontWeight: 600,
+              cursor: 'pointer',
+              backgroundColor: showMap ? 'var(--primary)' : 'transparent',
+              color: showMap ? '#fff' : 'var(--text-secondary)',
+              transition: 'var(--transition-fast)'
+            }}
+          >
+            🗺️ Split Map
+          </button>
+          <button 
+            onClick={() => setShowMap(false)}
+            style={{ 
+              padding: '6px 14px', 
+              borderRadius: '6px', 
+              border: 'none', 
+              fontSize: '0.85rem', 
+              fontWeight: 600,
+              cursor: 'pointer',
+              backgroundColor: !showMap ? 'var(--primary)' : 'transparent',
+              color: !showMap ? '#fff' : 'var(--text-secondary)',
+              transition: 'var(--transition-fast)'
+            }}
+          >
+            📋 List Only
+          </button>
+        </div>
+      </div>
       
-      <div style={{ display: 'grid', gridTemplateColumns: '3fr 9fr', gap: '30px', alignItems: 'start' }}>
+      <div style={{ 
+        display: 'grid', 
+        gridTemplateColumns: showMap ? '2.5fr 4.5fr 5fr' : '3fr 9fr', 
+        gap: '24px', 
+        alignItems: 'start',
+        transition: 'grid-template-columns 0.3s ease'
+      }}>
         
         {/* Filters Sidebar */}
         <aside className="glass" style={{ borderRadius: 'var(--radius-lg)', padding: '24px', display: 'flex', flexDirection: 'column', gap: '20px', position: 'sticky', top: '90px' }}>
@@ -245,8 +291,14 @@ function SearchContent() {
                   display: 'flex',
                   transition: 'var(--transition-smooth)'
                 }}
-                onMouseEnter={(e) => e.currentTarget.style.borderColor = 'var(--primary)'}
-                onMouseLeave={(e) => e.currentTarget.style.borderColor = 'var(--border-color)'}>
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = 'var(--primary)';
+                  setHoveredVendorId(vendor.id);
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = 'var(--border-color)';
+                  setHoveredVendorId(null);
+                }}>
                   
                   {/* Image side */}
                   <div style={{ 
@@ -331,6 +383,18 @@ function SearchContent() {
             </div>
           )}
         </section>
+
+        {showMap && (
+          <aside style={{ 
+            position: 'sticky', 
+            top: '90px', 
+            height: 'calc(100vh - 140px)', 
+            borderRadius: 'var(--radius-lg)', 
+            overflow: 'hidden' 
+          }} className="glass">
+            <MapView vendors={vendors} hoveredVendorId={hoveredVendorId} />
+          </aside>
+        )}
 
       </div>
     </div>
