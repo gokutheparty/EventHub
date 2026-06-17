@@ -96,7 +96,7 @@ export default function VendorAnalyticsPage() {
       </div>
 
       {/* Dashboard Sub-navigation Tabs */}
-      <div style={{ display: 'flex', gap: '20px', marginBottom: '35px', borderBottom: '1px solid var(--border-color)', paddingBottom: '12px' }}>
+      <div className="dashboard-tabs">
         <Link href="/dashboard/profile" style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', fontWeight: 500, paddingBottom: '12px', transition: 'var(--transition-fast)' }}
               onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text-primary)'}
               onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-secondary)'}>
@@ -151,7 +151,7 @@ export default function VendorAnalyticsPage() {
       </div>
 
       {/* Grid: Secondary analytics graphs & Conversion details */}
-      <div style={{ display: 'grid', gridTemplateColumns: '7fr 5fr', gap: '30px' }}>
+      <div className="dashboard-grid-7-5">
         
         {/* Performance conversion ratios */}
         <div className="glass" style={{ borderRadius: 'var(--radius-lg)', padding: '30px' }}>

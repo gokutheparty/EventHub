@@ -230,7 +230,7 @@ export default function VendorProfileDashboard() {
       )}
 
       {/* Dashboard Sub-navigation Tabs */}
-      <div style={{ display: 'flex', gap: '20px', marginBottom: '35px', borderBottom: '1px solid var(--border-color)', paddingBottom: '12px' }}>
+      <div className="dashboard-tabs">
         <Link href="/dashboard/profile" style={{ fontSize: '0.9rem', color: 'var(--text-primary)', fontWeight: 700, borderBottom: '2px solid var(--primary)', paddingBottom: '12px', marginBottom: '-14px' }}>
           Edit Profile
         </Link>
@@ -265,7 +265,7 @@ export default function VendorProfileDashboard() {
         </div>
       )}
 
-      <div style={{ display: 'grid', gridTemplateColumns: '7fr 5fr', gap: '40px' }}>
+      <div className="dashboard-grid-7-5">
         {/* Profile Details Edit Form */}
         <div className="glass" style={{ borderRadius: 'var(--radius-lg)', padding: '35px' }}>
           <h2 style={{ fontSize: '1.4rem', marginBottom: '24px', borderBottom: '1px solid var(--border-color)', paddingBottom: '12px' }}>
@@ -273,7 +273,7 @@ export default function VendorProfileDashboard() {
           </h2>
 
           <form onSubmit={handleProfileSave} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+            <div className="form-grid-2">
               <div>
                 <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '8px' }}>Business Name</label>
                 <input type="text" value={name} onChange={(e) => setName(e.target.value)} required style={{ width: '100%', backgroundColor: 'var(--bg-input)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', padding: '12px' }} />
@@ -289,7 +289,7 @@ export default function VendorProfileDashboard() {
               <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={4} style={{ width: '100%', backgroundColor: 'var(--bg-input)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', padding: '12px', resize: 'vertical' }} />
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+            <div className="form-grid-2">
               <div>
                 <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '8px' }}>Contact Email</label>
                 <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} style={{ width: '100%', backgroundColor: 'var(--bg-input)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', padding: '12px' }} />
@@ -308,7 +308,7 @@ export default function VendorProfileDashboard() {
                   <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '6px' }}>Full Street Address</label>
                   <input type="text" value={location} onChange={(e) => setLocation(e.target.value)} placeholder="e.g. Kempinski Hotel Road, Accra" style={{ width: '100%', backgroundColor: 'var(--bg-input)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', padding: '12px' }} />
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                <div className="form-grid-2" style={{ gap: '16px' }}>
                   <div>
                     <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '6px' }}>City</label>
                     <input type="text" value={city} onChange={(e) => setCity(e.target.value)} placeholder="e.g. Accra or Kumasi" style={{ width: '100%', backgroundColor: 'var(--bg-input)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', padding: '12px' }} />
@@ -318,7 +318,7 @@ export default function VendorProfileDashboard() {
                     <input type="text" value={region} onChange={(e) => setRegion(e.target.value)} placeholder="e.g. Greater Accra or Ashanti" style={{ width: '100%', backgroundColor: 'var(--bg-input)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', padding: '12px' }} />
                   </div>
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                <div className="form-grid-2" style={{ gap: '16px' }}>
                   <div>
                     <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '6px' }}>Latitude (Decimal)</label>
                     <input type="number" step="any" value={latitude} onChange={(e) => setLatitude(e.target.value)} placeholder="e.g. 5.5539" style={{ width: '100%', backgroundColor: 'var(--bg-input)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', padding: '12px' }} />
@@ -332,7 +332,7 @@ export default function VendorProfileDashboard() {
             </div>
 
             {/* Social links */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+            <div className="form-grid-2">
               <div>
                 <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '8px' }}>Instagram Username</label>
                 <input type="text" value={instagram} onChange={(e) => setInstagram(e.target.value)} placeholder="username" style={{ width: '100%', backgroundColor: 'var(--bg-input)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', padding: '12px' }} />
@@ -445,7 +445,7 @@ export default function VendorProfileDashboard() {
                 <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, marginBottom: '6px' }}>Project Title</label>
                 <input type="text" value={projTitle} onChange={(e) => setProjTitle(e.target.value)} required placeholder="e.g. Wedding at Kempinski" style={{ width: '100%', backgroundColor: 'var(--bg-input)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', padding: '10px' }} />
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+              <div className="form-grid-2" style={{ gap: '12px' }}>
                 <div>
                   <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, marginBottom: '6px' }}>Event Type</label>
                   <input type="text" value={projType} onChange={(e) => setProjType(e.target.value)} placeholder="e.g. Wedding, Gala, Concert" style={{ width: '100%', backgroundColor: 'var(--bg-input)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', padding: '10px' }} />

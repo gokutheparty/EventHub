@@ -19,6 +19,9 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <div className="layout-wrapper" style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+          {/* Mobile Navigation Backdrop */}
+          <div id="mobile-nav-backdrop" className="mobile-backdrop" />
+
           {/* Header */}
           <header className="glass" style={{ position: 'sticky', top: 0, zIndex: 100, borderBottom: '1px solid var(--border-color)' }}>
             <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 20px', height: '70px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -29,8 +32,15 @@ export default function RootLayout({
                 <span className="badge badge-business" style={{ fontSize: '0.65rem' }}>Beta</span>
               </Link>
 
+              {/* Hamburger Button for Mobile */}
+              <button className="hamburger-btn" id="mobile-menu-btn" aria-label="Toggle navigation menu">
+                <span></span>
+                <span></span>
+                <span></span>
+              </button>
+
               {/* Navigation Links */}
-              <nav style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
+              <nav className="nav-menu" style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
                 <Link href="/search" style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', transition: 'var(--transition-fast)', fontWeight: 500 }} id="nav-search-link">
                   Browse Vendors
                 </Link>
@@ -126,6 +136,39 @@ export default function RootLayout({
                   }
                 })
                 .catch(err => console.error(err));
+            })();
+
+            // Mobile Menu Toggle logic
+            (function() {
+              const menuBtn = document.getElementById('mobile-menu-btn');
+              const navMenu = document.querySelector('.nav-menu');
+              const backdrop = document.getElementById('mobile-nav-backdrop');
+
+              function toggleMenu() {
+                menuBtn.classList.toggle('active');
+                navMenu.classList.toggle('mobile-open');
+                backdrop.classList.toggle('active');
+                
+                if (navMenu.classList.contains('mobile-open')) {
+                  document.body.style.overflow = 'hidden';
+                } else {
+                  document.body.style.overflow = '';
+                }
+              }
+
+              if (menuBtn && navMenu && backdrop) {
+                menuBtn.addEventListener('click', toggleMenu);
+                backdrop.addEventListener('click', toggleMenu);
+
+                // Event delegation: close drawer when links/buttons inside it are clicked
+                navMenu.addEventListener('click', function(e) {
+                  if (e.target.closest('a') || e.target.closest('button')) {
+                    if (navMenu.classList.contains('mobile-open')) {
+                      toggleMenu();
+                    }
+                  }
+                });
+              }
             })();
 
             function logout() {

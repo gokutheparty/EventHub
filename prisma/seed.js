@@ -17,6 +17,79 @@ const categories = [
   { name: 'Live Bands', slug: 'live-bands', description: 'Live musical bands, instrumentalists, and singers' }
 ];
 
+const IMAGE_POOLS = {
+  'event-centers': [
+    "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1527529482837-4698179dc6ce?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1505232458627-a720f795f68e?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=800&q=80"
+  ],
+  'event-planners': [
+    "https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1515263487990-61b07816b324?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1522158673376-3c72b228230e?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1531058020387-3be344559be6?auto=format&fit=crop&w=800&q=80"
+  ],
+  'ushering-agencies': [
+    "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1561489396-888724a1543d?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1515187029135-18ee286d815b?auto=format&fit=crop&w=800&q=80"
+  ],
+  'caterers': [
+    "https://images.unsplash.com/photo-1555244162-803834f70033?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1495521821757-a1efb6729352?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&w=800&q=80"
+  ],
+  'decorators': [
+    "https://images.unsplash.com/photo-1523438885200-e635ba2c371e?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1519225495810-7512c696505a?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1518895949257-7621c3c786d7?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&w=800&q=80"
+  ],
+  'photographers': [
+    "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1542038784456-1ea8e935640e?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1452780212940-6f5c0d14d84a?auto=format&fit=crop&w=800&q=80"
+  ],
+  'djs': [
+    "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1516873240891-4bf014598ab4?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1486591978090-58e619d37fe7?auto=format&fit=crop&w=800&q=80"
+  ],
+  'makeup-artists': [
+    "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1457972729786-0411a8b2704b?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=800&q=80"
+  ],
+  'mcs': [
+    "https://images.unsplash.com/photo-1475721027785-f74eccf877e2?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=800&q=80"
+  ],
+  'security-services': [
+    "https://images.unsplash.com/photo-1485738422979-f5c462d49f74?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1506157786151-b8491531f063?auto=format&fit=crop&w=800&q=80"
+  ],
+  'furniture-rentals': [
+    "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1581428982868-e410dd047a90?auto=format&fit=crop&w=800&q=80"
+  ],
+  'tent-providers': [
+    "https://images.unsplash.com/photo-1505232458627-a720f795f68e?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1533105079780-92b9be482077?auto=format&fit=crop&w=800&q=80"
+  ],
+  'live-bands': [
+    "https://images.unsplash.com/photo-1487180142328-0c4e37023af5?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1501386761578-eac5c94b800a?auto=format&fit=crop&w=800&q=80"
+  ]
+};
+
 // Seed Metadata helpers
 const ACCRA_NEIGHBORHOODS = [
   { name: "East Legon", lat: 5.6322, lon: -0.1654, region: "Greater Accra", city: "Accra" },
@@ -249,6 +322,36 @@ async function main() {
         }
       });
 
+      // Seed Portfolio Projects and Images
+      const projectCount = await prisma.portfolioProject.count({
+        where: { vendorId: vendor.id }
+      });
+      if (projectCount === 0) {
+        const imageUrls = IMAGE_POOLS[group.catSlug] || IMAGE_POOLS['event-centers'];
+        for (let pIdx = 1; pIdx <= 2; pIdx++) {
+          const projectImg1 = imageUrls[(c * 2 + (pIdx - 1) * 2) % imageUrls.length];
+          const projectImg2 = imageUrls[(c * 2 + (pIdx - 1) * 2 + 1) % imageUrls.length];
+          
+          await prisma.portfolioProject.create({
+            data: {
+              vendorId: vendor.id,
+              title: `${vendor.name} Showcase Project ${pIdx}`,
+              eventType: pIdx === 1 ? 'Wedding Reception' : 'Corporate Gala',
+              guestCount: 150 + pIdx * 50,
+              budgetRange: `GHS ${10000 * pIdx} - ${20000 * pIdx}`,
+              description: `A stunning showcase of our premium services executed in ${geo.city}. Everything was customized to client specifications and delivered with high professionalism.`,
+              testimonial: `Amazing execution by ${vendor.name}. Our guests were wowed!`,
+              images: {
+                create: [
+                  { imageUrl: projectImg1, isPrimary: true },
+                  { imageUrl: projectImg2, isPrimary: false }
+                ]
+              }
+            }
+          });
+        }
+      }
+
       vendorIndex++;
     }
   }
@@ -258,7 +361,7 @@ async function main() {
 
 main()
   .catch((e) => {
-    console.error(db_err);
+    console.error(e);
     process.exit(1);
   })
   .finally(async () => {

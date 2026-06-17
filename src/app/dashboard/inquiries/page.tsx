@@ -77,7 +77,7 @@ export default function VendorInquiriesDashboard() {
       </div>
 
       {/* Dashboard Sub-navigation Tabs */}
-      <div style={{ display: 'flex', gap: '20px', marginBottom: '35px', borderBottom: '1px solid var(--border-color)', paddingBottom: '12px' }}>
+      <div className="dashboard-tabs">
         <Link href="/dashboard/profile" style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', fontWeight: 500, paddingBottom: '12px', transition: 'var(--transition-fast)' }}
               onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text-primary)'}
               onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-secondary)'}>
@@ -101,7 +101,7 @@ export default function VendorInquiriesDashboard() {
       {inquiries.length > 0 ? (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           {inquiries.map((inq) => (
-            <div key={inq.id} className="glass" style={{ borderRadius: 'var(--radius-lg)', padding: '24px', display: 'grid', gridTemplateColumns: '8fr 4fr', gap: '30px', alignItems: 'start' }}>
+            <div key={inq.id} className="glass vendor-details-grid" style={{ borderRadius: 'var(--radius-lg)', padding: '24px', alignItems: 'start' }}>
               <div>
                 <div style={{ display: 'flex', justifyItems: 'center', gap: '12px', marginBottom: '8px' }}>
                   <h3 style={{ fontSize: '1.15rem', fontWeight: 700 }}>{inq.customerName}</h3>

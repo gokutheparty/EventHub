@@ -42,6 +42,7 @@ function SearchContent() {
   const [favorites, setFavorites] = useState<string[]>([]);
   const [showMap, setShowMap] = useState(true);
   const [hoveredVendorId, setHoveredVendorId] = useState<string | null>(null);
+  const [isFiltersOpen, setIsFiltersOpen] = useState(false);
 
   // Fetch Favorites of currently logged in user
   const loadFavorites = async () => {
@@ -145,7 +146,39 @@ function SearchContent() {
 
   return (
     <div style={{ maxWidth: showMap ? '1500px' : '1200px', margin: '40px auto', padding: '0 20px', width: '100%', flex: 1, transition: 'max-width 0.3s ease' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
+      
+      {/* Mobile Backdrop for Filters Bottom Sheet */}
+      <div 
+        className={`mobile-backdrop filters-backdrop ${isFiltersOpen ? 'active' : ''}`} 
+        onClick={() => setIsFiltersOpen(false)} 
+      />
+
+      {/* Floating Toggle Button for Mobile */}
+      <button 
+        className="mobile-view-toggle-btn"
+        onClick={() => setShowMap(!showMap)}
+      >
+        {showMap ? '📋 Show List' : '🗺️ Show Map'}
+      </button>
+
+      {/* Mobile Top Bar Search & Filter Trigger */}
+      <div className="mobile-search-controls">
+        <input 
+          type="text" 
+          placeholder="🔍 Search vendors, services..." 
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="mobile-search-bar"
+        />
+        <button 
+          onClick={() => setIsFiltersOpen(true)}
+          className="mobile-filter-trigger"
+        >
+          🎛️ Filters
+        </button>
+      </div>
+
+      <div className="search-grid-title-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
         <h1 style={{ fontSize: '2rem', fontWeight: 800, margin: 0 }}>Browse Service Providers</h1>
         
         <div style={{ display: 'flex', gap: '4px', background: 'var(--bg-secondary)', padding: '4px', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
@@ -184,24 +217,38 @@ function SearchContent() {
         </div>
       </div>
       
-      <div style={{ 
-        display: 'grid', 
-        gridTemplateColumns: showMap ? '2.5fr 4.5fr 5fr' : '3fr 9fr', 
-        gap: '24px', 
-        alignItems: 'start',
-        transition: 'grid-template-columns 0.3s ease'
-      }}>
+      <div className={`search-grid ${showMap ? 'has-map' : ''}`}>
         
         {/* Filters Sidebar */}
-        <aside className="glass" style={{ borderRadius: 'var(--radius-lg)', padding: '24px', display: 'flex', flexDirection: 'column', gap: '20px', position: 'sticky', top: '90px' }}>
+        <aside className={`glass search-sidebar ${isFiltersOpen ? 'mobile-open' : ''}`} style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '20px', position: 'sticky', top: '90px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-color)', paddingBottom: '12px' }}>
             <h3 style={{ fontSize: '1.1rem' }}>Filter Listings</h3>
-            <button 
-              onClick={resetFilters} 
-              style={{ background: 'transparent', border: 'none', color: 'var(--primary)', fontSize: '0.8rem', cursor: 'pointer', fontWeight: 600 }}
-            >
-              Reset All
-            </button>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <button 
+                onClick={resetFilters} 
+                style={{ background: 'transparent', border: 'none', color: 'var(--primary)', fontSize: '0.8rem', cursor: 'pointer', fontWeight: 600 }}
+              >
+                Reset All
+              </button>
+              <button 
+                onClick={() => setIsFiltersOpen(false)}
+                style={{ 
+                  background: 'var(--primary)', 
+                  border: 'none', 
+                  color: '#fff', 
+                  fontSize: '0.8rem', 
+                  padding: '6px 12px', 
+                  borderRadius: '6px', 
+                  cursor: 'pointer', 
+                  fontWeight: 600,
+                  display: 'inline-flex',
+                  alignItems: 'center'
+                }}
+                className="mobile-apply-btn"
+              >
+                Apply
+              </button>
+            </div>
           </div>
 
           {/* Search text input */}
@@ -272,7 +319,7 @@ function SearchContent() {
         </aside>
 
         {/* Search Results Grid */}
-        <section style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+        <section className="search-results" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           
           <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
             Found {vendors.length} service providers matching parameters
@@ -285,12 +332,7 @@ function SearchContent() {
           ) : vendors.length > 0 ? (
             <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '20px' }}>
               {vendors.map((vendor) => (
-                <div key={vendor.id} className="glass" style={{ 
-                  borderRadius: 'var(--radius-lg)', 
-                  overflow: 'hidden', 
-                  display: 'flex',
-                  transition: 'var(--transition-smooth)'
-                }}
+                <div key={vendor.id} className="vendor-card glass"
                 onMouseEnter={(e) => {
                   e.currentTarget.style.borderColor = 'var(--primary)';
                   setHoveredVendorId(vendor.id);
@@ -301,14 +343,8 @@ function SearchContent() {
                 }}>
                   
                   {/* Image side */}
-                  <div style={{ 
-                    width: '240px', 
-                    backgroundColor: 'var(--bg-input)', 
-                    backgroundPosition: 'center', 
-                    backgroundSize: 'cover', 
-                    backgroundImage: vendor.thumbnail ? `url(${vendor.thumbnail})` : 'none',
-                    flexShrink: 0,
-                    position: 'relative'
+                  <div className="vendor-card-image" style={{ 
+                    backgroundImage: vendor.thumbnail ? `url(${vendor.thumbnail})` : 'none'
                   }}>
                     {vendor.isFeatured && (
                       <span className="badge badge-premium" style={{ position: 'absolute', top: '12px', left: '12px', fontSize: '0.65rem' }}>Featured</span>
@@ -316,7 +352,7 @@ function SearchContent() {
                   </div>
 
                   {/* Info details side */}
-                  <div style={{ padding: '24px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                  <div className="vendor-card-info">
                     <div>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
                         <div>
@@ -384,17 +420,16 @@ function SearchContent() {
           )}
         </section>
 
-        {showMap && (
-          <aside style={{ 
-            position: 'sticky', 
-            top: '90px', 
-            height: 'calc(100vh - 140px)', 
-            borderRadius: 'var(--radius-lg)', 
-            overflow: 'hidden' 
-          }} className="glass">
-            <MapView vendors={vendors} hoveredVendorId={hoveredVendorId} />
-          </aside>
-        )}
+        <aside className="glass search-map-container" style={{ 
+          position: 'sticky', 
+          top: '90px', 
+          height: 'calc(100vh - 140px)', 
+          borderRadius: 'var(--radius-lg)', 
+          overflow: 'hidden',
+          display: showMap ? 'block' : 'none'
+        }}>
+          <MapView vendors={vendors} hoveredVendorId={hoveredVendorId} showMap={showMap} />
+        </aside>
 
       </div>
     </div>

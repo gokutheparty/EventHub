@@ -5,13 +5,28 @@ import React, { useEffect, useRef, useState } from 'react';
 interface MapViewProps {
   vendors: any[];
   hoveredVendorId: string | null;
+  showMap?: boolean;
 }
 
-export default function MapView({ vendors, hoveredVendorId }: MapViewProps) {
+export default function MapView({ vendors, hoveredVendorId, showMap }: MapViewProps) {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
   const markersRef = useRef<{ [key: string]: any }>({});
   const [leafletLoaded, setLeafletLoaded] = useState(false);
+
+  // Invalidate map layout size when visibility changes on mobile
+  useEffect(() => {
+    if (!leafletLoaded || !mapRef.current) return;
+    mapRef.current.invalidateSize();
+    
+    const timer = setTimeout(() => {
+      if (mapRef.current) {
+        mapRef.current.invalidateSize({ animate: true });
+      }
+    }, 300); // Wait for CSS transition
+    
+    return () => clearTimeout(timer);
+  }, [showMap, leafletLoaded]);
 
   // Load Leaflet resources dynamically on client mount
   useEffect(() => {

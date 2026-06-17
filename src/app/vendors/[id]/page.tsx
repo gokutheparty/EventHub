@@ -325,7 +325,7 @@ export default function VendorDetailsPage() {
       </div>
 
       {/* Main Grid: Info + Sidebar */}
-      <div style={{ display: 'grid', gridTemplateColumns: '8fr 4fr', gap: '40px' }}>
+      <div className="vendor-details-grid">
         
         {/* Main Details Panel */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '40px' }}>

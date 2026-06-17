@@ -27,12 +27,106 @@ interface Vendor {
   };
 }
 
+const HERO_SLIDES = [
+  "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=1600&q=80",
+  "https://images.unsplash.com/photo-1519225495810-7512c696505a?auto=format&fit=crop&w=1600&q=80",
+  "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&w=1600&q=80",
+  "https://images.unsplash.com/photo-1505232458627-a720f795f68e?auto=format&fit=crop&w=1600&q=80"
+];
+
+const getBentoClassAndStyle = (slug: string) => {
+  switch (slug) {
+    case 'event-centers':
+      return {
+        className: 'bento-card bento-card-wide bento-card-image-bg',
+        style: {
+          backgroundImage: `url('https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=800&q=80')`,
+          minHeight: '200px',
+          cursor: 'pointer'
+        },
+        hasImage: true
+      };
+    case 'event-planners':
+      return {
+        className: 'bento-card bento-card-tall',
+        style: {
+          borderLeft: '4px solid var(--accent-gold)',
+          boxShadow: 'var(--shadow-glow)',
+          cursor: 'pointer'
+        },
+        icon: '📅'
+      };
+    case 'ushering-agencies':
+      return {
+        className: 'bento-card bento-card-wide',
+        style: {
+          background: 'linear-gradient(135deg, rgba(99,102,241,0.1) 0%, rgba(22,25,37,0.8) 100%)',
+          cursor: 'pointer'
+        },
+        icon: '🤝'
+      };
+    case 'photographers':
+      return {
+        className: 'bento-card bento-card-image-bg',
+        style: {
+          backgroundImage: `url('https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?auto=format&fit=crop&w=800&q=80')`,
+          cursor: 'pointer'
+        },
+        hasImage: true
+      };
+    case 'decorators':
+      return {
+        className: 'bento-card',
+        style: {
+          background: 'linear-gradient(135deg, rgba(251,191,36,0.05) 0%, rgba(22,25,37,0.8) 100%)',
+          cursor: 'pointer'
+        },
+        icon: '✨'
+      };
+    case 'caterers':
+      return {
+        className: 'bento-card',
+        style: { cursor: 'pointer' },
+        icon: '🍽️'
+      };
+    case 'djs':
+      return {
+        className: 'bento-card',
+        style: {
+          boxShadow: '0 0 15px rgba(99, 102, 241, 0.15)',
+          cursor: 'pointer'
+        },
+        icon: '🎧'
+      };
+    case 'mcs':
+      return {
+        className: 'bento-card',
+        style: { cursor: 'pointer' },
+        icon: '🎙️'
+      };
+    default:
+      return {
+        className: 'bento-card',
+        style: { cursor: 'pointer' },
+        icon: '💼'
+      };
+  }
+};
+
 export default function LandingPage() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [featured, setFeatured] = useState<Vendor[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchCity, setSearchCity] = useState('');
   const [loading, setLoading] = useState(true);
+  const [activeSlide, setActiveSlide] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setActiveSlide((prev) => (prev + 1) % HERO_SLIDES.length);
+    }, 6000);
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     async function loadData() {
@@ -64,15 +158,31 @@ export default function LandingPage() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
       
-      {/* Hero Search Section */}
+      {/* Hero Search Section with background slideshow */}
       <section style={{ 
         position: 'relative', 
-        padding: '100px 20px', 
+        padding: '120px 20px', 
         textAlign: 'center', 
-        background: 'radial-gradient(circle at top, rgba(99,102,241,0.15) 0%, transparent 60%)',
-        borderBottom: '1px solid var(--border-color)'
+        borderBottom: '1px solid var(--border-color)',
+        overflow: 'hidden',
+        minHeight: '520px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
       }}>
-        <div style={{ maxWidth: '800px', margin: '0 auto' }}>
+        {/* Background Slideshow */}
+        <div className="hero-slideshow-container">
+          {HERO_SLIDES.map((slide, index) => (
+            <div
+              key={index}
+              className={`hero-slide ${index === activeSlide ? 'active' : ''}`}
+              style={{ backgroundImage: `url(${slide})` }}
+            />
+          ))}
+          <div className="hero-overlay" />
+        </div>
+
+        <div className="hero-content" style={{ maxWidth: '800px', margin: '0 auto', width: '100%' }}>
           <span className="badge badge-premium" style={{ marginBottom: '16px', animation: 'pulseGlow 2s infinite' }}>
             Event Planning Redefined
           </span>
@@ -81,29 +191,22 @@ export default function LandingPage() {
             fontWeight: 800, 
             letterSpacing: '-0.03em', 
             marginBottom: '20px',
-            fontFamily: 'var(--font-heading)'
+            fontFamily: 'var(--font-heading)',
+            color: '#fff',
+            textShadow: '0 2px 10px rgba(0,0,0,0.5)'
           }}>
             Discover & Book <br />
-            <span style={{ background: 'linear-gradient(to right, var(--accent-gold), var(--primary))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+            <span style={{ background: 'linear-gradient(to right, var(--accent-gold), #818cf8)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
               Verified Event Vendors
             </span>{' '}
             in Africa
           </h1>
-          <p style={{ fontSize: '1.2rem', color: 'var(--text-secondary)', marginBottom: '40px', maxWidth: '600px', margin: '0 auto 40px' }}>
+          <p style={{ fontSize: '1.2rem', color: '#e5e7eb', marginBottom: '40px', maxWidth: '600px', margin: '0 auto 40px', textShadow: '0 1px 4px rgba(0,0,0,0.6)' }}>
             EventHub connects you with certified event centers, planners, decorators, caterers, and entertainers with transparent reviews and reputation scores.
           </p>
 
           {/* Search Box Card */}
-          <form onSubmit={handleSearchSubmit} className="glass" style={{ 
-            display: 'grid', 
-            gridTemplateColumns: '5fr 3fr 2fr', 
-            gap: '12px', 
-            padding: '12px', 
-            borderRadius: 'var(--radius-lg)', 
-            maxWidth: '720px', 
-            margin: '0 auto',
-            boxShadow: 'var(--shadow-lg), var(--shadow-glow)'
-          }}>
+          <form onSubmit={handleSearchSubmit} className="hero-search-form glass">
             <input 
               type="text" 
               placeholder="What service are you looking for? (e.g. Wedding Hall)" 
@@ -115,7 +218,9 @@ export default function LandingPage() {
                 borderRadius: 'var(--radius-md)',
                 padding: '14px 18px',
                 fontSize: '0.95rem',
-                outline: 'none'
+                outline: 'none',
+                color: '#fff',
+                width: '100%'
               }}
             />
             <input 
@@ -129,13 +234,18 @@ export default function LandingPage() {
                 borderRadius: 'var(--radius-md)',
                 padding: '14px 18px',
                 fontSize: '0.95rem',
-                outline: 'none'
+                outline: 'none',
+                color: '#fff',
+                width: '100%'
               }}
             />
             <button type="submit" className="glow-btn" style={{ 
               borderRadius: 'var(--radius-md)', 
               fontSize: '0.95rem', 
-              color: '#fff' 
+              color: '#fff',
+              padding: '14px 18px',
+              width: '100%',
+              cursor: 'pointer'
             }}>
               Search
             </button>
@@ -143,7 +253,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Dynamic Categories Grid */}
+      {/* Dynamic Bento Categories Grid */}
       <section style={{ maxWidth: '1200px', margin: '80px auto', padding: '0 20px', width: '100%' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '40px' }}>
           <div>
@@ -155,45 +265,54 @@ export default function LandingPage() {
           </Link>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '24px' }}>
+        <div className="bento-grid">
           {loading ? (
-            Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="glass" style={{ height: '140px', borderRadius: 'var(--radius-md)', opacity: 0.5 }} />
+            Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="bento-card" style={{ opacity: 0.5, minHeight: '150px' }} />
             ))
           ) : (
-            categories.map((cat) => (
-              <Link 
-                href={`/search?category=${cat.slug}`} 
-                key={cat.id} 
-                className="glass" 
-                style={{ 
-                  padding: '24px', 
-                  borderRadius: 'var(--radius-md)', 
-                  display: 'flex', 
-                  flexDirection: 'column', 
-                  justifyContent: 'space-between', 
-                  height: '150px',
-                  transition: 'var(--transition-smooth)',
-                  cursor: 'pointer'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-4px)';
-                  e.currentTarget.style.borderColor = 'var(--primary)';
-                  e.currentTarget.style.boxShadow = 'var(--shadow-glow)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.borderColor = 'var(--border-color)';
-                  e.currentTarget.style.boxShadow = 'var(--shadow-sm)';
-                }}
-              >
-                <div>
-                  <h3 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '6px' }}>{cat.name}</h3>
-                  <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', lineHeight: 1.4 }}>{cat.description}</p>
-                </div>
-                <span style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--primary)' }}>Explore listings &rarr;</span>
-              </Link>
-            ))
+            categories.map((cat) => {
+              const bentoProps = getBentoClassAndStyle(cat.slug);
+              if (bentoProps.hasImage) {
+                return (
+                  <Link 
+                    href={`/search?category=${cat.slug}`} 
+                    key={cat.id} 
+                    className={bentoProps.className}
+                    style={bentoProps.style}
+                  >
+                    <div className="bento-card-image-bg-content">
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                        <span className="badge badge-premium" style={{ background: 'rgba(10,11,16,0.6)', border: '1px solid var(--accent-gold)', textShadow: 'none' }}>Trending</span>
+                        <span style={{ fontSize: '1.2rem' }}>★</span>
+                      </div>
+                      <div>
+                        <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#fff', textShadow: '0 2px 4px rgba(0,0,0,0.8)', marginBottom: '4px' }}>{cat.name}</h3>
+                        <p style={{ fontSize: '0.78rem', color: '#f3f4f6', textShadow: '0 1px 2px rgba(0,0,0,0.8)', lineHeight: 1.4 }}>{cat.description}</p>
+                      </div>
+                    </div>
+                  </Link>
+                );
+              } else {
+                return (
+                  <Link 
+                    href={`/search?category=${cat.slug}`} 
+                    key={cat.id} 
+                    className={bentoProps.className}
+                    style={bentoProps.style}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
+                      <span className="bento-icon">{bentoProps.icon}</span>
+                      <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>&rarr;</span>
+                    </div>
+                    <div>
+                      <h3 style={{ fontSize: '1.15rem', fontWeight: 700, marginBottom: '6px', color: 'var(--text-primary)' }}>{cat.name}</h3>
+                      <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', lineHeight: 1.4 }}>{cat.description}</p>
+                    </div>
+                  </Link>
+                );
+              }
+            })
           )}
         </div>
       </section>
