@@ -101,7 +101,7 @@ function SearchContent() {
       try {
         const res = await fetch('/api/categories');
         const data = await res.json();
-        setCategories(data);
+        setCategories(Array.isArray(data) ? data : []);
       } catch (e) {
         console.error('Error fetching categories:', e);
       }
@@ -124,7 +124,7 @@ function SearchContent() {
 
         const res = await fetch(`/api/vendors?${params.toString()}`);
         const data = await res.json();
-        setVendors(data);
+        setVendors(Array.isArray(data) ? data : []);
       } catch (err) {
         console.error('Error fetching vendors:', err);
       } finally {

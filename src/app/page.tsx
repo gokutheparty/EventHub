@@ -133,11 +133,11 @@ export default function LandingPage() {
       try {
         const catRes = await fetch('/api/categories');
         const catData = await catRes.json();
-        setCategories(catData.slice(0, 8)); // Grab top 8 for landing grid
+        setCategories(Array.isArray(catData) ? catData.slice(0, 8) : []);
 
         const vendorRes = await fetch('/api/vendors');
         const vendorData = await vendorRes.json();
-        setFeatured(vendorData.slice(0, 3)); // Grab top 3 featured
+        setFeatured(Array.isArray(vendorData) ? vendorData.slice(0, 3) : []);
       } catch (e) {
         console.error('Error loading landing page data:', e);
       } finally {
