@@ -22,6 +22,68 @@ export default function RootLayout({
           {/* Mobile Navigation Backdrop */}
           <div id="mobile-nav-backdrop" className="mobile-backdrop" />
 
+          {/* Customer Profile Drawer Backdrop */}
+          <div id="profile-drawer-backdrop" className="mobile-backdrop filters-backdrop" />
+
+          {/* Customer Profile Sliding Drawer Panel */}
+          <div id="profile-drawer" className="profile-drawer glass-panel">
+            <div>
+              {/* Header */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
+                <h3 style={{ fontSize: '0.85rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-secondary)' }}>Account Profile</h3>
+                <button id="profile-drawer-close-btn" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid var(--border-color)', color: 'var(--text-secondary)', width: '32px', height: '32px', borderRadius: '50%', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', transition: 'var(--transition-fast)' }}>✕</button>
+              </div>              {/* Identity Header */}
+              <div id="drawer-user-card" style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '20px', background: 'rgba(255,255,255,0.02)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-lg)', marginBottom: '24px' }}>
+                <div id="drawer-avatar" style={{ width: '54px', height: '54px', borderRadius: '12px', background: 'linear-gradient(to right, #6366f1, #fbbf24)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem', fontWeight: 800, color: '#fff' }}>
+                  EK
+                </div>
+                <div style={{ minWidth: 0, flex: 1 }}>
+                  <h4 id="drawer-name" style={{ fontSize: '1.05rem', fontWeight: 800, color: '#fff', marginBottom: '4px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    Loading...
+                  </h4>
+                  <p id="drawer-email" style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    Loading...
+                  </p>
+                </div>
+              </div>
+
+              {/* Stats Metrics Blocks */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '30px' }}>
+                <div style={{ padding: '16px', background: 'rgba(255,255,255,0.01)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)' }}>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>Account Status</span>
+                  <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--success)', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                    <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--success)', display: 'inline-block' }}></span> Active
+                  </span>
+                </div>
+                <div style={{ padding: '16px', background: 'rgba(255,255,255,0.01)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)' }}>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>User Role</span>
+                  <span id="drawer-role-badge" style={{ fontSize: '0.85rem', fontWeight: 600, color: '#fff' }}>CUSTOMER</span>
+                </div>
+              </div>
+
+              {/* Action Menu Lists */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                <a id="drawer-dashboard-btn" href="/dashboard" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', borderRadius: 'var(--radius-md)', fontSize: '0.88rem', color: 'var(--text-secondary)', transition: 'var(--transition-fast)' }}>
+                  <span>🚀 Go to Dashboard</span>
+                  <span>&rarr;</span>
+                </a>
+                <a href="/search" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', borderRadius: 'var(--radius-md)', fontSize: '0.88rem', color: 'var(--text-secondary)', transition: 'var(--transition-fast)' }}>
+                  <span>🔍 Browse Vendors</span>
+                  <span>&rarr;</span>
+                </a>
+                <a href="/requests/new" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', borderRadius: 'var(--radius-md)', fontSize: '0.88rem', color: 'var(--text-secondary)', transition: 'var(--transition-fast)' }}>
+                  <span>🎟️ Create Event Request</span>
+                  <span>&rarr;</span>
+                </a>
+              </div>
+            </div>
+
+            {/* Logout Panel Element Footer */}
+            <button id="profile-drawer-signout-btn" style={{ width: '100%', marginTop: 'auto', padding: '12px', border: '1px solid rgba(239, 68, 68, 0.2)', background: 'rgba(239, 68, 68, 0.05)', color: '#f87171', fontWeight: 600, borderRadius: 'var(--radius-md)', fontSize: '0.88rem', cursor: 'pointer', transition: 'var(--transition-fast)' }}>
+              Sign Out Session
+            </button>
+          </div>
+
           {/* Header */}
           <header className="glass" style={{ position: 'sticky', top: 0, zIndex: 100, borderBottom: '1px solid var(--border-color)' }}>
             <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 20px', height: '70px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -123,15 +185,35 @@ export default function RootLayout({
                       } else if (data.user.role === 'ADMIN') {
                         dashboardLink = '/admin/verification';
                       }
+                      
+                      // Calculate initials
+                      const initials = data.user.fullName.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+                      
+                      // Inject Apple-style profile button in header
                       nav.innerHTML = \`
-                        <a href="\${dashboardLink}" style="font-size: 0.9rem; color: var(--text-primary); font-weight: 600; display: inline-flex; align-items: center; gap: 8px;" id="nav-dashboard-link">
-                          <span>\${data.user.fullName}</span>
-                          <span class="badge badge-basic" style="font-size: 0.6rem; padding: 2px 6px;">\${data.user.role}</span>
-                        </a>
-                        <button onclick="logout()" style="background: transparent; border: 1px solid var(--border-color); color: var(--text-secondary); padding: 6px 12px; border-radius: var(--radius-md); font-size: 0.8rem; cursor: pointer; transition: var(--transition-fast);" id="nav-logout-btn">
-                          Logout
+                        <button onclick="openProfileDrawer()" style="background: transparent; border: none; font-size: 0.9rem; color: var(--text-primary); font-weight: 600; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; padding: 0;" id="nav-dashboard-btn">
+                          <div style="width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(to right, #6366f1, #fbbf24); display: flex; align-items: center; justify-content: center; font-size: 0.75rem; color: #fff; font-weight: 800;">
+                            \${initials}
+                          </div>
+                          <div style="text-align: left; display: flex; flex-direction: column;">
+                            <span class="user-fullname" style="font-size: 0.85rem; font-weight: 600; color: var(--text-primary);">\${data.user.fullName}</span>
+                            <span class="user-role" style="font-size: 0.65rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em;">\${data.user.role}</span>
+                          </div>
                         </button>
                       \`;
+                      
+                      // Populate the Profile Drawer Panel dynamically
+                      const drawerAvatar = document.getElementById('drawer-avatar');
+                      const drawerName = document.getElementById('drawer-name');
+                      const drawerEmail = document.getElementById('drawer-email');
+                      const drawerRoleBadge = document.getElementById('drawer-role-badge');
+                      const drawerDashboardBtn = document.getElementById('drawer-dashboard-btn');
+                      
+                      if (drawerAvatar) drawerAvatar.innerText = initials;
+                      if (drawerName) drawerName.innerText = data.user.fullName;
+                      if (drawerEmail) drawerEmail.innerText = data.user.email || (data.user.username ? (data.user.username + '@eventhub.com') : 'user@eventhub.com');
+                      if (drawerRoleBadge) drawerRoleBadge.innerText = data.user.role;
+                      if (drawerDashboardBtn) drawerDashboardBtn.href = dashboardLink;
                     }
                   }
                 })
@@ -169,6 +251,30 @@ export default function RootLayout({
                   }
                 });
               }
+            })();
+
+            // Profile Drawer Toggle logic
+            (function() {
+              const profileDrawer = document.getElementById('profile-drawer');
+              const profileBackdrop = document.getElementById('profile-drawer-backdrop');
+              const closeBtn = document.getElementById('profile-drawer-close-btn');
+              const signoutBtn = document.getElementById('profile-drawer-signout-btn');
+
+              window.openProfileDrawer = function() {
+                profileDrawer.classList.add('open');
+                profileBackdrop.classList.add('active');
+                document.body.style.overflow = 'hidden';
+              };
+
+              window.closeProfileDrawer = function() {
+                profileDrawer.classList.remove('open');
+                profileBackdrop.classList.remove('active');
+                document.body.style.overflow = '';
+              };
+
+              if (profileBackdrop) profileBackdrop.addEventListener('click', window.closeProfileDrawer);
+              if (closeBtn) closeBtn.addEventListener('click', window.closeProfileDrawer);
+              if (signoutBtn) signoutBtn.addEventListener('click', logout);
             })();
 
             function logout() {

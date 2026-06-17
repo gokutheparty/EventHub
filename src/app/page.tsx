@@ -38,7 +38,7 @@ const getBentoClassAndStyle = (slug: string) => {
   switch (slug) {
     case 'event-centers':
       return {
-        className: 'bento-card bento-card-wide bento-card-image-bg',
+        className: 'bento-card bento-card-wide bento-card-image-bg glass-panel glass-panel-hover',
         style: {
           backgroundImage: `url('https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=800&q=80')`,
           minHeight: '200px',
@@ -48,17 +48,17 @@ const getBentoClassAndStyle = (slug: string) => {
       };
     case 'event-planners':
       return {
-        className: 'bento-card bento-card-tall',
+        className: 'bento-card bento-card-tall glass-panel glass-panel-hover',
         style: {
-          borderLeft: '4px solid var(--accent-gold)',
-          boxShadow: 'var(--shadow-glow)',
+          backgroundImage: `url('https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&w=600&q=80')`,
+          minHeight: '340px',
           cursor: 'pointer'
         },
-        icon: '📅'
+        hasImage: true
       };
     case 'ushering-agencies':
       return {
-        className: 'bento-card bento-card-wide',
+        className: 'bento-card bento-card-wide glass-panel glass-panel-hover',
         style: {
           background: 'linear-gradient(135deg, rgba(99,102,241,0.1) 0%, rgba(22,25,37,0.8) 100%)',
           cursor: 'pointer'
@@ -67,7 +67,7 @@ const getBentoClassAndStyle = (slug: string) => {
       };
     case 'photographers':
       return {
-        className: 'bento-card bento-card-image-bg',
+        className: 'bento-card bento-card-image-bg glass-panel glass-panel-hover',
         style: {
           backgroundImage: `url('https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?auto=format&fit=crop&w=800&q=80')`,
           cursor: 'pointer'
@@ -76,7 +76,7 @@ const getBentoClassAndStyle = (slug: string) => {
       };
     case 'decorators':
       return {
-        className: 'bento-card',
+        className: 'bento-card glass-panel glass-panel-hover',
         style: {
           background: 'linear-gradient(135deg, rgba(251,191,36,0.05) 0%, rgba(22,25,37,0.8) 100%)',
           cursor: 'pointer'
@@ -85,13 +85,13 @@ const getBentoClassAndStyle = (slug: string) => {
       };
     case 'caterers':
       return {
-        className: 'bento-card',
+        className: 'bento-card glass-panel glass-panel-hover',
         style: { cursor: 'pointer' },
         icon: '🍽️'
       };
     case 'djs':
       return {
-        className: 'bento-card',
+        className: 'bento-card glass-panel glass-panel-hover',
         style: {
           boxShadow: '0 0 15px rgba(99, 102, 241, 0.15)',
           cursor: 'pointer'
@@ -100,13 +100,13 @@ const getBentoClassAndStyle = (slug: string) => {
       };
     case 'mcs':
       return {
-        className: 'bento-card',
+        className: 'bento-card glass-panel glass-panel-hover',
         style: { cursor: 'pointer' },
         icon: '🎙️'
       };
     default:
       return {
-        className: 'bento-card',
+        className: 'bento-card glass-panel glass-panel-hover',
         style: { cursor: 'pointer' },
         icon: '💼'
       };
